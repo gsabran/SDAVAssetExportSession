@@ -240,18 +240,9 @@
                 lastSamplePresentationTime = CMTimeSubtract(lastSamplePresentationTime, self.timeRange.start);
                 self.progress = duration == 0 ? 1 : CMTimeGetSeconds(lastSamplePresentationTime) / duration;
 
-                if ([self.delegate respondsToSelector:@selector(exportSession:renderFrame:withPresentationTime:toBuffer:)])
+                if ([self.delegate respondsToSelector:@selector(didProgress)])
                 {
-                    CVPixelBufferRef pixelBuffer = (CVPixelBufferRef)CMSampleBufferGetImageBuffer(sampleBuffer);
-                    CVPixelBufferRef renderBuffer = NULL;
-                    CVPixelBufferPoolCreatePixelBuffer(NULL, self.videoPixelBufferAdaptor.pixelBufferPool, &renderBuffer);
-                    [self.delegate exportSession:self renderFrame:pixelBuffer withPresentationTime:lastSamplePresentationTime toBuffer:renderBuffer];
-                    if (![self.videoPixelBufferAdaptor appendPixelBuffer:renderBuffer withPresentationTime:lastSamplePresentationTime])
-                    {
-                        error = YES;
-                    }
-                    CVPixelBufferRelease(renderBuffer);
-                    handled = YES;
+                    [self.delegate didProgress:self];
                 }
             }
             if (!handled && ![input appendSampleBuffer:sampleBuffer])
