@@ -240,7 +240,8 @@
                 lastSamplePresentationTime = CMTimeSubtract(lastSamplePresentationTime, self.timeRange.start);
                 self.progress = duration == 0 ? 1 : CMTimeGetSeconds(lastSamplePresentationTime) / duration;
 
-                if ([self.delegate respondsToSelector:@selector(didProgress)])
+                SEL selector = NSSelectorFromString(@"didProgress:");
+                if ([self.delegate respondsToSelector:selector])
                 {
                     [self.delegate didProgress:self];
                 }
